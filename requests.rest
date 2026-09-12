@@ -1,0 +1,10 @@
+@baseUrl = http://localhost:3000
+
+### Hello World test
+GET {{baseUrl}}/
+
+### Get all contacts
+GET {{baseUrl}}/contacts
+
+### Get a single contact by id (replace the id with a real _id from your database)
+GET {{baseUrl}}/contacts/6aa5d35551133480436958de
