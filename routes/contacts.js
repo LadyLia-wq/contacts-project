@@ -35,4 +35,82 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+const REQUIRED_FIELDS = ['firstName', 'lastName', 'email', 'favoriteColor', 'birthday'];
+
+const getMissingFields = (body) =>
+  REQUIRED_FIELDS.filter((field) => !body[field]);
+
+// POST a new contact
+/* #swagger.tags = ['Contacts']
+   #swagger.summary = 'Create a new contact' */
+router.post('/', async (req, res) => {
+  try {
+    const missingFields = getMissingFields(req.body);
+    if (missingFields.length > 0) {
+      return res.status(400).json({ error: `Missing required fields: ${missingFields.join(', ')}` });
+    }
+
+    const { firstName, lastName, email, favoriteColor, birthday } = req.body;
+    const db = getDb();
+    const result = await db.collection('contacts').insertOne({
+      firstName,
+      lastName,
+      email,
+      favoriteColor,
+      birthday,
+    });
+
+    res.status(201).json({ _id: result.insertedId });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT (update) a contact by id
+/* #swagger.tags = ['Contacts']
+   #swagger.summary = 'Update a contact by id' */
+router.put('/:id', async (req, res) => {
+  try {
+    const missingFields = getMissingFields(req.body);
+    if (missingFields.length > 0) {
+      return res.status(400).json({ error: `Missing required fields: ${missingFields.join(', ')}` });
+    }
+
+    const { firstName, lastName, email, favoriteColor, birthday } = req.body;
+    const db = getDb();
+    const contactId = new ObjectId(req.params.id);
+    const result = await db.collection('contacts').updateOne(
+      { _id: contactId },
+      { $set: { firstName, lastName, email, favoriteColor, birthday } }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: 'Contact not found' });
+    }
+
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE a contact by id
+/* #swagger.tags = ['Contacts']
+   #swagger.summary = 'Delete a contact by id' */
+router.delete('/:id', async (req, res) => {
+  try {
+    const db = getDb();
+    const contactId = new ObjectId(req.params.id);
+    const result = await db.collection('contacts').deleteOne({ _id: contactId });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Contact not found' });
+    }
+
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

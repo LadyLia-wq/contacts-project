@@ -8,3 +8,30 @@ GET {{baseUrl}}/contacts
 
 ### Get a single contact by id (replace the id with a real _id from your database)
 GET {{baseUrl}}/contacts/6aa5d35551133480436958de
+
+### Create a new contact
+POST {{baseUrl}}/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "email": "jane.doe@example.com",
+  "favoriteColor": "blue",
+  "birthday": "1990-01-01"
+}
+
+### Update a contact by id (replace the id with a real _id from your database)
+PUT {{baseUrl}}/contacts/6aa5d35551133480436958de
+Content-Type: application/json
+
+{
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "email": "jane.doe@example.com",
+  "favoriteColor": "green",
+  "birthday": "1990-01-01"
+}
+
+### Delete a contact by id (replace the id with a real _id from your database)
+DELETE {{baseUrl}}/contacts/6aa5d35551133480436958de
