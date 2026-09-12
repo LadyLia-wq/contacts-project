@@ -1,5 +1,7 @@
 require('dotenv').config();
 const express = require('express');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger-output.json');
 const { initDb } = require('./db/connect');
 
 const app = express();
@@ -11,6 +13,7 @@ app.get('/', (req, res) => {
   res.send('Hello World');
 });
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/', require('./routes'));
 
 initDb((err) => {

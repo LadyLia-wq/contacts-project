@@ -4,6 +4,8 @@ const { ObjectId } = require('mongodb');
 const { getDb } = require('../db/connect');
 
 // GET all contacts
+/* #swagger.tags = ['Contacts']
+   #swagger.summary = 'Get all contacts' */
 router.get('/', async (req, res) => {
   try {
     const db = getDb();
@@ -15,6 +17,8 @@ router.get('/', async (req, res) => {
 });
 
 // GET a single contact by id
+/* #swagger.tags = ['Contacts']
+   #swagger.summary = 'Get a single contact by id' */
 router.get('/:id', async (req, res) => {
   try {
     const db = getDb();
