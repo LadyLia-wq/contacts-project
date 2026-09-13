@@ -84,16 +84,17 @@ router.put('/:id', async (req, res) => {
 
     const db = getDb();
     const contactId = new ObjectId(req.params.id);
-    const result = await db.collection('contacts').updateOne(
+    const result = await db.collection('contacts').findOneAndUpdate(
       { _id: contactId },
-      { $set: updates }
+      { $set: updates },
+      { returnDocument: 'after' }
     );
 
-    if (result.matchedCount === 0) {
+    if (!result) {
       return res.status(404).json({ error: 'Contact not found' });
     }
 
-    res.status(204).send();
+    res.status(200).json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
