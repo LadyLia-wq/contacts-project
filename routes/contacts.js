@@ -66,22 +66,27 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT (update) a contact by id
+// PUT (partially update) a contact by id
 /* #swagger.tags = ['Contacts']
-   #swagger.summary = 'Update a contact by id' */
+   #swagger.summary = 'Update part of a contact by id' */
 router.put('/:id', async (req, res) => {
   try {
-    const missingFields = getMissingFields(req.body);
-    if (missingFields.length > 0) {
-      return res.status(400).json({ error: `Missing required fields: ${missingFields.join(', ')}` });
+    const updates = {};
+    for (const field of REQUIRED_FIELDS) {
+      if (req.body[field] !== undefined) {
+        updates[field] = req.body[field];
+      }
     }
 
-    const { firstName, lastName, email, favoriteColor, birthday } = req.body;
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ error: `No valid fields provided. Allowed fields: ${REQUIRED_FIELDS.join(', ')}` });
+    }
+
     const db = getDb();
     const contactId = new ObjectId(req.params.id);
     const result = await db.collection('contacts').updateOne(
       { _id: contactId },
-      { $set: { firstName, lastName, email, favoriteColor, birthday } }
+      { $set: updates }
     );
 
     if (result.matchedCount === 0) {
